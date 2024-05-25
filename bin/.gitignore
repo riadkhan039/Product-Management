@@ -1,0 +1,10 @@
+/AvailableState.class
+/OutOfStockState.class
+/Product.class
+/ProductContext.class
+/ProductManager.class
+/ProductManagerTest.class
+/ProductState.class
+/ProductInterface.class
+/ClothingProduct.class
+/ElectronicsProduct.class
