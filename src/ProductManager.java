@@ -1,59 +1,46 @@
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProductManager {
-    private static volatile ProductManager instance;
-    private List<Product> products;
+    private static ProductManager instance;
+    private Map<Integer, ProductInterface> inventory;
 
     private ProductManager() {
-        products = new ArrayList<>();
+        inventory = new HashMap<>();
     }
 
-    public static ProductManager getInstance() {
+    public static synchronized ProductManager getInstance() {
         if (instance == null) {
-            synchronized (ProductManager.class) {
-                if (instance == null) {
-                    instance = new ProductManager();
-                }
-            }
+            instance = new ProductManager();
         }
         return instance;
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
-    }
-
-    public void updateProduct(Product product) {
-        for (Product p : products) {
-            if (p.getId() == product.getId()) {
-                p.setName(product.getName());
-                p.setDescription(product.getDescription());
-                p.setPrice(product.getPrice());
-                p.setQuantity(product.getQuantity());
-                p.setSize(product.getSize());
-                p.setColor(product.getColor());
-                p.setMaterial(product.getMaterial());
-            }
+    public boolean addProduct(ProductInterface product) {
+        if (!inventory.containsKey(product.getId())) {
+            inventory.put(product.getId(), product);
+            return true;
         }
+        return false;
     }
 
-    public void deleteProduct(int productId) {
-        products.removeIf(product -> product.getId() == productId);
-    }
-
-    public Product getProductDetails(int productId) {
-        for (Product product : products) {
-            if (product.getId() == productId) {
-                return product;
-            }
+    public boolean updateProductDetails(ProductInterface product) {
+        if (inventory.containsKey(product.getId())) {
+            inventory.put(product.getId(), product);
+            return true;
         }
-        return null;
+        return false;
     }
 
-    public List<Product> getAllProducts() {
-        return new ArrayList<>(products);
+    public boolean deleteProductFromInventory(int productId) {
+        if (inventory.containsKey(productId)) {
+            inventory.remove(productId);
+            return true;
+        }
+        return false;
+    }
+
+    public ProductInterface getProductDetails(int productId) {
+        return inventory.get(productId);
     }
 }
-
